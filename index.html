@@ -43,12 +43,21 @@
             justify-content: center;
             position: relative;
             overflow: hidden;
+            transition: all 0.3s ease;
+        }
+        
+        .preview-area.drag-over {
+            background: #e7f3ff;
+            border-color: #667eea;
+            transform: scale(1.02);
         }
         
         .preview-placeholder {
             color: #adb5bd;
             font-size: 16px;
             text-align: center;
+            pointer-events: none;
+            line-height: 1.6;
         }
         
         #videoPreview, #imagePreview {
@@ -151,7 +160,7 @@
         
         <!-- Preview area for video and extracted image -->
         <div class="preview-area" id="previewArea">
-            <div class="preview-placeholder" id="placeholder">📹 Select a video to preview</div>
+            <div class="preview-placeholder" id="placeholder">📹 Drag & drop a video here<br>or click Browse below</div>
             <video id="videoPreview" controls></video>
             <img id="imagePreview" alt="Extracted frame">
             <div class="loader" id="loader"></div>
@@ -182,10 +191,11 @@
         let processed = false;
         let videoPreviewURL = null;
 
-        // Handle file selection when user picks a video
-        document.getElementById('videoInput').onchange = function(e) {
-            videoFile = e.target.files[0];
-            if (!videoFile) return;
+        // Handle file selection (from browse or drag-drop)
+        function handleFileSelect(file) {
+            if (!file || !file.type.startsWith('video/')) return;
+            
+            videoFile = file;
             
             // Clean up previous preview URL
             if (videoPreviewURL) URL.revokeObjectURL(videoPreviewURL);
@@ -207,7 +217,30 @@
             status.className = 'status-selected';
             document.getElementById('processBtn').disabled = false;
             processed = false;
+        }
+
+        // Handle file input change
+        document.getElementById('videoInput').onchange = function(e) {
+            handleFileSelect(e.target.files[0]);
         };
+        
+        // Drag and drop handlers
+        const previewArea = document.getElementById('previewArea');
+        
+        previewArea.addEventListener('dragover', (e) => {
+            e.preventDefault();
+            previewArea.classList.add('drag-over');
+        });
+        
+        previewArea.addEventListener('dragleave', () => {
+            previewArea.classList.remove('drag-over');
+        });
+        
+        previewArea.addEventListener('drop', (e) => {
+            e.preventDefault();
+            previewArea.classList.remove('drag-over');
+            handleFileSelect(e.dataTransfer.files[0]);
+        });
 
         // Extract the last frame from the selected video
         function processVideo() {
