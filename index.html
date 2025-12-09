@@ -10,9 +10,11 @@
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             min-height: 100vh;
             display: flex;
+            flex-direction: column;
             align-items: center;
             justify-content: center;
             padding: 20px;
+            position: relative;
         }
         
         .container {
@@ -152,11 +154,23 @@
         .status-done { background: #d4edda; color: #155724; }
         
         canvas { display: none; }
+        
+        .footer {
+            position: fixed;
+            bottom: 10px;
+            left: 50%;
+            transform: translateX(-50%);
+            color: white;
+            text-align: center;
+            font-size: 12px;
+            text-shadow: 0 2px 4px rgba(0,0,0,0.3);
+            line-height: 1.5;
+        }
     </style>
 </head>
 <body>
     <div class="container">
-        <h2>🎬 Last Frame Extractor</h2>
+        <h2>🎬 AI Last Frame Extractor</h2>
         
         <!-- Preview area for video and extracted image -->
         <div class="preview-area" id="previewArea">
@@ -184,6 +198,11 @@
         
         <!-- Canvas element used to capture the video frame as an image -->
         <canvas id="canvas"></canvas>
+    </div>
+    
+    <div class="footer">
+        Developed by Ramesh Dura - From Mountains of Nepal<br>
+        Copyright © 2025
     </div>
 
     <script>
